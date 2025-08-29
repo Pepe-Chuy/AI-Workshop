@@ -1,0 +1,48 @@
+=== CNN Training Mini Checklist (Keras + CIFAR-10) ===
+
+✅ Data Prep
+- Normalize images: x / 255.0
+- One-hot encode labels
+- Split train / val / test
+- Add augmentation (flip, rotate, shift)
+
+✅ Model Design
+- Conv2D + ReLU + Pool → repeat
+- Gradually increase filters (32 → 64 → 128)
+- Add Dropout (0.25–0.5) for regularization
+- Use BatchNormalization for stability
+- GlobalAveragePooling2D before Dense
+
+✅ Training
+- Optimizer: Adam (lr=0.001 default)
+- Batch size: 32 or 64
+- Epochs: 20–50 (watch overfitting)
+- Use callbacks:
+  - EarlyStopping
+  - ModelCheckpoint
+  - ReduceLROnPlateau
+
+✅ Activations
+- Hidden layers: ReLU
+- Output: Softmax (num_classes=10)
+
+✅ Monitoring
+- Plot train vs val accuracy/loss
+- If val loss ↑ while train loss ↓ → overfitting
+- Adjust dropout or use more data aug
+
+✅ Evaluation
+- Use model.evaluate() on test set
+- Check misclassified samples to learn weaknesses
+
+✅ Save & Load
+- Save: model.save("cnn_model.h5")
+- Load: keras.models.load_model("cnn_model.h5")
+
+--------------------------------------------------------
+🌟 Golden Rules for First-Timers
+- Start simple, add complexity later
+- Change ONE parameter at a time
+- Document what works (filters, lr, dropout, etc.)
+- Don’t chase 100% accuracy — focus on learning process
+--------------------------------------------------------

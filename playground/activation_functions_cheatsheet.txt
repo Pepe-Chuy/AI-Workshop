@@ -1,0 +1,137 @@
+
+=== Activation Functions Cheatsheet for CNNs ===
+
+This cheatsheet provides a catalogue of activation functions commonly used in CNNs. Each entry explains:
+1. How it works.
+2. How it improves the model.
+3. Parameters with descriptions, ranges, and tips.
+4. Example code you can copy into your notebook and modify.
+
+------------------------------------------------------------
+1. ReLU (Rectified Linear Unit)
+------------------------------------------------------------
+How it works: Outputs x if x > 0, otherwise 0.
+Improvement: Prevents vanishing gradient, faster training.
+Parameters: none.
+Tip: Default choice for most CNN layers.
+
+Example:
+layers.Activation('relu')
+# or directly in layer:
+layers.Conv2D(64, (3,3), activation='relu')
+
+------------------------------------------------------------
+2. LeakyReLU
+------------------------------------------------------------
+How it works: Like ReLU, but allows small negative values (x*alpha).
+Improvement: Solves “dying ReLU” problem (neurons stuck at 0).
+Parameters:
+- alpha: float [0–1], negative slope (e.g., 0.01).
+Tip: Use if you suspect dead neurons with ReLU.
+
+Example:
+layers.LeakyReLU(alpha=0.01)
+
+------------------------------------------------------------
+3. ELU (Exponential Linear Unit)
+------------------------------------------------------------
+How it works: Similar to ReLU but smooths negative values with exponential curve.
+Improvement: Faster convergence, avoids dead neurons.
+Parameters:
+- alpha: float > 0, controls curve for negatives (default 1.0).
+Tip: Useful for deeper networks.
+
+Example:
+layers.ELU(alpha=1.0)
+
+------------------------------------------------------------
+4. SELU (Scaled Exponential Linear Unit)
+------------------------------------------------------------
+How it works: Like ELU but with self-normalizing effect when used with proper initialization.
+Improvement: Keeps mean and variance stable.
+Parameters:
+- alpha, scale: fixed for self-normalization.
+Tip: Use only with 'lecun_normal' init and no BatchNorm.
+
+Example:
+layers.Activation('selu')
+
+------------------------------------------------------------
+5. Sigmoid
+------------------------------------------------------------
+How it works: Maps values to (0,1) range.
+Improvement: Good for probabilities, binary outputs.
+Parameters: none.
+Tip: Avoid in hidden layers (vanishing gradients), use for binary classification.
+
+Example:
+layers.Activation('sigmoid')
+
+------------------------------------------------------------
+6. Tanh
+------------------------------------------------------------
+How it works: Maps values to (-1,1).
+Improvement: Zero-centered, better than sigmoid for hidden layers.
+Parameters: none.
+Tip: Still suffers from vanishing gradients, use sparingly.
+
+Example:
+layers.Activation('tanh')
+
+------------------------------------------------------------
+7. Softmax
+------------------------------------------------------------
+How it works: Converts vector to probability distribution (sums to 1).
+Improvement: Ideal for multiclass classification outputs.
+Parameters:
+- axis: int, which axis to normalize (default -1).
+Tip: Always use in last layer for CIFAR-10 (num_classes=10).
+
+Example:
+layers.Dense(10, activation='softmax')
+
+------------------------------------------------------------
+8. Softplus
+------------------------------------------------------------
+How it works: Smooth approximation of ReLU (log(1+exp(x))).
+Improvement: Differentiable everywhere, avoids hard 0 cutoff.
+Parameters: none.
+Tip: Rarely used, but sometimes smoother training.
+
+Example:
+layers.Activation('softplus')
+
+------------------------------------------------------------
+9. Swish (SiLU)
+------------------------------------------------------------
+How it works: Smooth nonlinearity, x * sigmoid(x).
+Improvement: Often outperforms ReLU in deep models.
+Parameters: none.
+Tip: Try in deeper CNNs, but slower.
+
+Example:
+tf.nn.swish(x)
+# or in Keras:
+layers.Activation('swish')
+
+------------------------------------------------------------
+10. Mish
+------------------------------------------------------------
+How it works: Smooth, non-monotonic activation: x * tanh(softplus(x)).
+Improvement: Claims better accuracy than ReLU/Swish in some tasks.
+Parameters: none.
+Tip: Experimental, slower, but worth testing.
+
+Example:
+import tensorflow_addons as tfa
+layers.Activation(tfa.activations.mish)
+
+------------------------------------------------------------
+=== Tips for CIFAR-10 ===
+- Use ReLU as default for hidden layers.
+- LeakyReLU or ELU can help if training stagnates.
+- Use Softmax in the final Dense(num_classes) layer.
+- Sigmoid only if binary classification task.
+- Try Swish/Mish for experiments, not as baseline.
+
+------------------------------------------------------------

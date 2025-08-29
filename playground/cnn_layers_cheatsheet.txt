@@ -1,0 +1,188 @@
+
+=== CNN Layer Cheatsheet for CIFAR-10 ===
+
+This cheatsheet provides a catalogue of commonly used layers in CNNs. Each entry explains:
+1. How the layer works.
+2. How it improves the model.
+3. Parameters with descriptions, ranges, and tips.
+4. Example code you can copy into your notebook and modify.
+
+------------------------------------------------------------
+1. Conv2D
+------------------------------------------------------------
+How it works: Applies convolution filters to extract local features (edges, textures, shapes).
+Improvement: Learns spatial hierarchies of features; deeper layers capture complex patterns.
+Parameters:
+- filters: int, number of filters (e.g., 32, 64, 128). More filters capture richer features but increase compute.
+- kernel_size: tuple of 2 ints (e.g., (3,3), (5,5)). Small = detail, large = context.
+- strides: tuple of 2 ints, step size (default (1,1)). Larger = faster, less detail.
+- padding: 'valid' (no pad) or 'same' (zero pad to keep size).
+- activation: usually 'relu'.
+Tip: Start with (3,3) kernels, 'same' padding.
+
+Example:
+layers.Conv2D(64, (3,3), activation='relu', padding='same')
+
+------------------------------------------------------------
+2. MaxPooling2D
+------------------------------------------------------------
+How it works: Downsamples feature maps by taking max value in each region.
+Improvement: Reduces computation and enforces spatial invariance.
+Parameters:
+- pool_size: tuple (e.g., (2,2), (3,3)).
+- strides: step of pooling (default = pool_size).
+Tip: (2,2) is standard; avoid pooling too aggressively early.
+
+Example:
+layers.MaxPooling2D((2,2))
+
+------------------------------------------------------------
+3. AveragePooling2D
+------------------------------------------------------------
+How it works: Similar to MaxPooling, but takes average instead of max.
+Improvement: Smoother feature maps, keeps more overall info.
+Parameters:
+- pool_size: tuple (e.g., (2,2), (3,3)).
+- strides: step size.
+Tip: Use when you want smoother signals instead of sharp ones.
+
+Example:
+layers.AveragePooling2D((2,2))
+
+------------------------------------------------------------
+4. GlobalAveragePooling2D
+------------------------------------------------------------
+How it works: Reduces each feature map to a single value (average).
+Improvement: Greatly reduces parameters, avoids overfitting, often replaces Flatten.
+Parameters: none.
+Tip: Use before Dense layers for compactness.
+
+Example:
+layers.GlobalAveragePooling2D()
+
+------------------------------------------------------------
+5. Flatten
+------------------------------------------------------------
+How it works: Flattens 2D feature maps into a 1D vector.
+Improvement: Prepares for Dense layers.
+Parameters: none.
+Tip: More parameters than GlobalAveragePooling2D, risk of overfitting.
+
+Example:
+layers.Flatten()
+
+------------------------------------------------------------
+6. Dense
+------------------------------------------------------------
+How it works: Fully connected layer, combines all inputs.
+Improvement: Learns complex, task-specific combinations of features.
+Parameters:
+- units: int, number of neurons (e.g., 128, 512).
+- activation: 'relu', 'softmax', etc.
+Tip: Use 'relu' in hidden layers, 'softmax' for output.
+
+Example:
+layers.Dense(512, activation='relu')
+
+------------------------------------------------------------
+7. Dropout
+------------------------------------------------------------
+How it works: Randomly deactivates neurons during training.
+Improvement: Prevents overfitting, improves generalization.
+Parameters:
+- rate: float [0.0–1.0], fraction of neurons dropped (e.g., 0.25, 0.5).
+Tip: Use higher rates (0.5) before final Dense layers.
+
+Example:
+layers.Dropout(0.5)
+
+------------------------------------------------------------
+8. BatchNormalization
+------------------------------------------------------------
+How it works: Normalizes activations of previous layer.
+Improvement: Speeds up training, stabilizes learning.
+Parameters:
+- momentum: float [0–1], for moving average (default 0.99).
+- epsilon: small float to avoid division by zero (default 0.001).
+Tip: Place after Conv/Dense, before activation.
+
+Example:
+layers.BatchNormalization()
+
+------------------------------------------------------------
+9. Conv2DTranspose (Deconvolution)
+------------------------------------------------------------
+How it works: Performs reverse of convolution, used for upsampling.
+Improvement: Useful for image generation or when you need larger feature maps.
+Parameters: same as Conv2D.
+Tip: For classification tasks, usually not needed; for autoencoders, yes.
+
+Example:
+layers.Conv2DTranspose(64, (3,3), strides=(2,2), padding='same')
+
+------------------------------------------------------------
+10. SeparableConv2D
+------------------------------------------------------------
+How it works: Factorizes convolution into depthwise + pointwise.
+Improvement: Reduces computation while keeping performance.
+Parameters: same as Conv2D.
+Tip: Use for lighter models.
+
+Example:
+layers.SeparableConv2D(64, (3,3), activation='relu', padding='same')
+
+------------------------------------------------------------
+11. DepthwiseConv2D
+------------------------------------------------------------
+How it works: Applies a single convolution per input channel.
+Improvement: Very efficient, used in MobileNet-like architectures.
+Parameters: same as Conv2D.
+Tip: Combine with pointwise conv for efficiency.
+
+Example:
+layers.DepthwiseConv2D((3,3), padding='same')
+
+------------------------------------------------------------
+12. Activation
+------------------------------------------------------------
+How it works: Applies nonlinear transformation (e.g., relu, sigmoid, tanh).
+Improvement: Allows network to learn complex mappings.
+Parameters:
+- activation: string or function ('relu', 'sigmoid', 'softmax').
+Tip: 'relu' is standard for hidden, 'softmax' for output.
+
+Example:
+layers.Activation('relu')
+
+------------------------------------------------------------
+13. SpatialDropout2D
+------------------------------------------------------------
+How it works: Drops entire feature maps instead of random neurons.
+Improvement: More effective regularization for CNNs.
+Parameters:
+- rate: float [0–1].
+Tip: Use instead of Dropout in Conv layers.
+
+Example:
+layers.SpatialDropout2D(0.3)
+
+------------------------------------------------------------
+14. LSTM / GRU (optional for sequence data)
+------------------------------------------------------------
+How it works: Recurrent layers that handle temporal dependencies.
+Improvement: Useful for video or time-series, less common for CIFAR.
+Parameters: units, return_sequences, activation.
+Tip: Skip for basic CNNs.
+
+Example:
+layers.LSTM(128)
+
+------------------------------------------------------------
+=== Tips for CIFAR-10 ===
+- Start simple: Conv2D + MaxPooling + Dense + Dropout.
+- Add BatchNormalization to stabilize.
+- Use GlobalAveragePooling2D instead of Flatten to reduce parameters.
+- Adjust filters gradually (32 → 64 → 128).
+- Avoid too deep models at first; CIFAR-10 images are small.
+
+------------------------------------------------------------
